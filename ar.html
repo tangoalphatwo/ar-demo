@@ -1,50 +1,63 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR Viewer</title>
+    <title>WebXR Plane Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-    <script>
-      function toggleDebugPlane() {
-        const plane = document.querySelector('#debugPlane');
-        const isVisible = plane.getAttribute('visible');
-        plane.setAttribute('visible', !isVisible);
-      }
-    </script>  
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
-    <!-- Toggle Button -->
-    <button onclick="toggleDebugPlane()"
-      style="position: absolute; top: 20px; right: 20px; z-index: 10; padding: 10px;">
-      Toggle Plane
-    </button>
-
     <a-scene
+      webxr="requiredFeatures: hit-test;"
+      xr-mode-ui="enabled: true"
+      renderer="colorManagement: true;"
       embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
-      renderer="logarithmicDepthBuffer: true;"
     >
-      <a-marker type="pattern" url="markers/marker.patt">
-        <!-- Your 3D model -->
-        <a-entity
-          gltf-model="assets/avacado.glb"
-          scale="1 1 1"
-          position="0 0 0"
-          rotation="0 0 0"
-        ></a-entity>
+      <!-- Simple plane -->
+      <a-entity id="cursorPlane"
+                geometry="primitive: plane; height: 1; width: 1"
+                material="color: red; opacity: 0.5"
+                rotation="-90 0 0"
+                visible="false">
+      </a-entity>
 
-        <!-- Debug Plane (attached to marker!) -->
-        <a-plane id="debugPlane"
-          color="red"
-          height="1"
-          width="1"
-          position="0 0 0"
-          rotation="-90 0 0"
-          visible="false">
-        </a-plane>
-      </a-marker>
-
-      <a-entity camera></a-entity>
+      <a-camera position="0 1.6 0" look-controls="enabled: false"></a-camera>
     </a-scene>
+
+    <script>
+      AFRAME.registerComponent('hit-test-visible-plane', {
+        init: function () {
+          const sceneEl = this.el.sceneEl;
+          const planeEl = document.querySelector('#cursorPlane');
+
+          sceneEl.renderer.xr.addEventListener('sessionstart', async () => {
+            const session = sceneEl.renderer.xr.getSession();
+            const viewerSpace = await session.requestReferenceSpace('viewer');
+            const hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
+
+            sceneEl.addEventListener('enter-vr', () => {
+              sceneEl.renderer.setAnimationLoop(() => {
+                const frame = sceneEl.frame;
+                if (!frame) return;
+
+                const hitTestResults = frame.getHitTestResults(hitTestSource);
+                if (hitTestResults.length > 0) {
+                  const referenceSpace = sceneEl.renderer.xr.getReferenceSpace();
+                  const hit = hitTestResults[0];
+                  const pose = hit.getPose(referenceSpace);
+                  if (pose) {
+                    planeEl.setAttribute('visible', true);
+                    planeEl.object3D.position.copy(pose.transform.position);
+                    planeEl.object3D.quaternion.copy(pose.transform.orientation);
+                  }
+                }
+              });
+            });
+          });
+        }
+      });
+
+      document.querySelector('a-scene').setAttribute('hit-test-visible-plane', '');
+    </script>
   </body>
 </html>
