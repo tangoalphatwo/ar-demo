@@ -10,7 +10,7 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
-        background: white;
+        background: transparent;
       }
 
       #startButton {
@@ -37,7 +37,7 @@
     <a-scene
       embedded
       arjs="sourceType: webcam; debugUIEnabled: false;"
-      renderer="logarithmicDepthBuffer: true;"
+      renderer="logarithmicDepthBuffer: true; alpha: true;"
     >
       <a-marker id="marker" type="pattern" url="markers/marker.patt">
         <!-- Hidden debug plane to show alignment -->
