@@ -27,7 +27,7 @@
         cursor: pointer;
       }
       #sceneContainer {
-        display: none;
+        visibility: hidden;
       }
     </style>
   </head>
@@ -71,7 +71,7 @@
 
       startButton.addEventListener("click", () => {
         startButton.style.display = "none";
-        sceneContainer.style.display = "block";
+        sceneContainer.style.display = "visible";
       });
     </script>
   </body>
