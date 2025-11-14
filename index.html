@@ -39,17 +39,16 @@
       arjs="sourceType: webcam; debugUIEnabled: false;"
       renderer="logarithmicDepthBuffer: true; alpha: true;"
     >
-      <a-marker id="marker" type="pattern" url="markers/marker.patt">
-        <!-- Hidden debug plane to show alignment -->
-        <a-plane id="debugPlane"
-          color="red"
-          height="1"
-          width="1"
-          rotation="-90 0 0"
+      <a-marker type="pattern" url="markers/marker.patt">
+        <!-- Drop the avocado model -->
+        <a-entity
+          id="avocadoModel"
+          gltf-model="assets/avocado.glb"
+          scale="0.5 0.5 0.5"
           position="0 0 0"
-          material="opacity: 0.5; transparent: true"
+          rotation="0 0 0"
           visible="false"
-        ></a-plane>
+        ></a-entity>
       </a-marker>
 
       <a-entity camera></a-entity>
@@ -64,10 +63,10 @@
 
       // Show debug plane on button click
       const button = document.getElementById("startButton");
-      const plane = document.getElementById("debugPlane");
+      const model = document.getElementById("avocadoModel");
 
       button.addEventListener("click", () => {
-        plane.setAttribute("visible", true);
+        model.setAttribute("visible", true);
         button.style.display = "none";
       });
     </script>
