@@ -1,36 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <title>WebAR Test</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <title>iPhone AR Debug</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
     <style>
-      body {
+      body, html {
         margin: 0;
-        background: #f3f3f3;
-        font-family: sans-serif;
-        text-align: center;
+        padding: 0;
+        overflow: hidden;
+        background: white;
       }
-      model-viewer {
-        width: 100vw;
-        height: 100vh;
+      #startButton {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px 40px;
+        font-size: 18px;
+        background-color: black;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        z-index: 10;
+        cursor: pointer;
+      }
+      #sceneContainer {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <model-viewer
-      id="arModel"
-      src="assets/Avocado2.glb"
-      ios-src="assets/avocado.usdz"
-      ar
-      ar-modes="scene-viewer quick-look"
-      camera-controls
-      auto-rotate
-      shadow-intensity="1"
-      exposure="1"
-      environment-image="neutral"
-    >
-    </model-viewer>
+    <button id="startButton">Start AR</button>
+
+    <div id="sceneContainer">
+      <a-scene
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false;"
+        renderer="logarithmicDepthBuffer: true;"
+      >
+        <a-marker type="pattern" url="markers/marker.patt">
+          <!-- Debug plane -->
+          <a-plane
+            id="debugPlane"
+            color="red"
+            height="1"
+            width="1"
+            rotation="-90 0 0"
+            position="0 0 0"
+            material="opacity: 0.5; transparent: true"
+          ></a-plane>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+      </a-scene>
+    </div>
+
+    <script>
+      // Detect if device is iPhone
+      const isiPhone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      if (!isiPhone) {
+        document.body.innerHTML = "<h2 style='text-align:center; margin-top: 40vh;'>This AR demo is for iPhone only.</h2>";
+      }
+
+      // Start AR on button click
+      const startButton = document.getElementById("startButton");
+      const sceneContainer = document.getElementById("sceneContainer");
+
+      startButton.addEventListener("click", () => {
+        startButton.style.display = "none";
+        sceneContainer.style.display = "block";
+      });
+    </script>
   </body>
 </html>
