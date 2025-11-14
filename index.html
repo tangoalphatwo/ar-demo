@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <title>WebAR Test</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        margin: 0;
+        background: #f3f3f3;
+        font-family: sans-serif;
+        text-align: center;
+      }
+      model-viewer {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello AR World</h1>
-    <p><a href="ar.html">View model in AR</a></p>
+    <model-viewer
+      id="arModel"
+      src="assets/avocado.glb"
+      ios-src="assets/avocado.usdz"
+      ar
+      ar-modes="scene-viewer quick-look"
+      camera-controls
+      auto-rotate
+      shadow-intensity="1"
+      exposure="1"
+      environment-image="neutral"
+    >
+    </model-viewer>
   </body>
 </html>
